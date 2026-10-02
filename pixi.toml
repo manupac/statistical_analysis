@@ -1,0 +1,27 @@
+[workspace]
+authors = ["manu-pac <manuela@stoix.dev>"]
+channels = ["conda-forge"]
+name = "stats_project"
+platforms = ["win-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+python = ">=3.14.4,<3.15"
+pytorch = ">=2.10.0,<3"
+transformers = ">=5.6.0,<6"
+pandas = ">=3.0.2,<4"
+numpy = ">=2.4.3,<3"
+torchcodec = ">=0.10.0,<0.11"
+scikit-learn = ">=1.8.0,<2"
+umap-learn = ">=0.5.12,<0.6"
+matplotlib = ">=3.10.9,<4"
+seaborn = ">=0.13.2,<0.14"
+statsmodels = ">=0.14.6,<0.15"
+dvc = ">=3.67.1,<4"
+
+[pypi-dependencies]
+torchaudio = ">=2.11.0, <3"
+praat-parselmouth = ">=0.4.7, <0.5"
+tgt = ">=1.5, <2"

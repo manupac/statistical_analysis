@@ -1,0 +1,134 @@
+stages:
+  parse_corpus:
+    cmd: pixi run python parse_corpus.py
+    deps:
+    - parse_corpus.py
+    outs:
+    - data/pipeline/phoneme_tokens.csv
+  extract_acoustics:
+    cmd: pixi run python extract_acoustics.py
+    deps:
+    - data/pipeline/phoneme_tokens.csv
+    - extract_acoustics.py
+    outs:
+    - data/pipeline/features_acoustic.csv
+  extract_neural_whisper:
+    cmd: pixi run python extract_neural_whisper.py
+    deps:
+    - data/pipeline/phoneme_tokens.csv
+    - extract_neural_whisper.py
+    outs:
+    - data/pipeline/features_whisper.npz
+  extract_neural_xlsr:
+    cmd: pixi run python extract_neural_xlsr.py
+    deps:
+    - data/pipeline/phoneme_tokens.csv
+    - extract_neural_xlsr.py
+    outs:
+    - data/pipeline/features_xlsr.npz
+  normalise:
+    cmd: pixi run python normalize.py
+    deps:
+    - data/pipeline/features_acoustic.csv
+    - data/pipeline/features_whisper.npz
+    - data/pipeline/features_xlsr.npz
+    - normalize.py
+    outs:
+    - data/pipeline/features_acoustic_norm.csv
+    - data/pipeline/features_whisper_pca.npz
+    - data/pipeline/features_xlsr_pca.npz
+  analyse_acoustics:
+    cmd: pixi run python analysis_acoustics.py
+    deps:
+    - analysis_acoustics.py
+    - data/pipeline/features_acoustic_norm.csv
+    outs:
+    - results/acoustics
+  analyse_neural:
+    cmd: pixi run python analysis_neural.py
+    deps:
+    - analysis_neural.py
+    - data/pipeline/features_whisper_pca.npz
+    - data/pipeline/features_xlsr_pca.npz
+    - data/pipeline/phoneme_tokens.csv
+    outs:
+    - results/descriptive_neural
+  analyse_crossrep:
+    cmd: pixi run python analysis_crossrep.py
+    deps:
+    - analysis_crossrep.py
+    - data/pipeline/features_acoustic_norm.csv
+    - data/pipeline/features_whisper_pca.npz
+    - data/pipeline/features_xlsr_pca.npz
+    outs:
+    - results/cross_representation
+  analyse_group_comparisons:
+    cmd: pixi run python analysis_group_comparisons.py
+    deps:
+    - analysis_group_comparisons.py
+    - data/pipeline/features_acoustic_norm.csv
+    - data/pipeline/features_whisper_pca.npz
+    - data/pipeline/features_xlsr_pca.npz
+    - data/pipeline/phoneme_tokens.csv
+    outs:
+    - results/group_comparisons
+  analyse_interphonemes:
+    cmd: pixi run python analysis_interphonemes.py
+    deps:
+    - analysis_interphonemes.py
+    - data/pipeline/features_acoustic_norm.csv
+    - data/pipeline/features_whisper_pca.npz
+    - data/pipeline/features_xlsr_pca.npz
+    outs:
+    - results/interphoneme
+  analyse_lme_acoustic:
+    cmd: pixi run python analysis_lme_acoustics.py
+    deps:
+    - analysis_lme_acoustics.py
+    - data/pipeline/features_acoustic_norm.csv
+    outs:
+    - results/lme_acoustic
+  analyse_lme_neural:
+    cmd: pixi run python analysis_lme_neural.py
+    deps:
+    - analysis_lme_neural.py
+    - data/pipeline/features_whisper_pca.npz
+    - data/pipeline/features_xlsr_pca.npz
+    - data/pipeline/phoneme_tokens.csv
+    outs:
+    - results/lme_neural
+  analyse_compare_representations:
+    cmd: pixi run python analysis_lme_compare_representations.py
+    deps:
+    - analysis_lme_compare_representations.py
+    - results/lme_acoustic
+    - results/lme_neural
+    outs:
+    - results/compare_representations
+  analyse_ci_rope:
+    cmd: pixi run python analysis_rope_ci.py
+    deps:
+    - analysis_rope_ci.py
+    - data/pipeline/features_acoustic.csv
+    - data/pipeline/features_whisper.npz
+    - data/pipeline/features_xlsr.npz
+    - data/pipeline/phoneme_tokens.csv
+    outs:
+    - results/ci_rope
+  analyse_trajectory_sensitivity:
+    cmd: pixi run python analysis_trajectory_sensitivity.py --vowels 
+      a,e,i,o,u,œ,ø,?,?,?
+    deps:
+    - analysis_trajectory_sensitivity.py
+    - data/pipeline/features_acoustic.csv
+    outs:
+    - results/trajectory_midpoint
+  analyse_clustering:
+    cmd: pixi run python analysis_hierarchical_clustering.py
+    deps:
+    - analysis_hierarchical_clustering.py
+    - data/pipeline/features_acoustic_norm.csv
+    - data/pipeline/features_whisper_pca.npz
+    - data/pipeline/features_xlsr_pca.npz
+    outs:
+    - results/clustering

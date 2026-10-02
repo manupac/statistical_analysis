@@ -1,0 +1,352 @@
+schema: '2.0'
+stages:
+  parse_corpus:
+    cmd: pixi run python parse_corpus.py
+    deps:
+    - path: parse_corpus.py
+      hash: md5
+      md5: 20ccf46a83cabdecf240ed8cdbfbff5a
+      size: 3709
+    outs:
+    - path: data/pipeline/phoneme_tokens.csv
+      hash: md5
+      md5: c5f342ffb4c616a09ed73234e98c8b54
+      size: 765662
+  extract_acoustics:
+    cmd: pixi run python extract_acoustics.py
+    deps:
+    - path: data/pipeline/phoneme_tokens.csv
+      hash: md5
+      md5: c5f342ffb4c616a09ed73234e98c8b54
+      size: 765662
+    - path: extract_acoustics.py
+      hash: md5
+      md5: 66e75e0f2456247145de4becf69f6c0f
+      size: 5137
+    outs:
+    - path: data/pipeline/features_acoustic.csv
+      hash: md5
+      md5: 578ef737498a0a2779e359e173a766c1
+      size: 2606371
+  extract_neural_whisper:
+    cmd: pixi run python extract_neural_whisper.py
+    deps:
+    - path: data/pipeline/phoneme_tokens.csv
+      hash: md5
+      md5: c5f342ffb4c616a09ed73234e98c8b54
+      size: 765662
+    - path: extract_neural_whisper.py
+      hash: md5
+      md5: 4801d535bd6fe481b157c9b16e0a0613
+      size: 5307
+    outs:
+    - path: data/pipeline/features_whisper.npz
+      hash: md5
+      md5: cab1577e2db60f86b6a8255f58ea8edc
+      size: 187845437
+  extract_neural_xlsr:
+    cmd: pixi run python extract_neural_xlsr.py
+    deps:
+    - path: data/pipeline/phoneme_tokens.csv
+      hash: md5
+      md5: c5f342ffb4c616a09ed73234e98c8b54
+      size: 765662
+    - path: extract_neural_xlsr.py
+      hash: md5
+      md5: a5c0a600f3f75ee333791f277a6e84b3
+      size: 5310
+    outs:
+    - path: data/pipeline/features_xlsr.npz
+      hash: md5
+      md5: ec6d3316f47b9eb56356f5c2f60d7e7d
+      size: 281721937
+  normalise:
+    cmd: pixi run python normalize.py
+    deps:
+    - path: data/pipeline/features_acoustic.csv
+      hash: md5
+      md5: 578ef737498a0a2779e359e173a766c1
+      size: 2606371
+    - path: data/pipeline/features_whisper.npz
+      hash: md5
+      md5: cab1577e2db60f86b6a8255f58ea8edc
+      size: 187845437
+    - path: data/pipeline/features_xlsr.npz
+      hash: md5
+      md5: ec6d3316f47b9eb56356f5c2f60d7e7d
+      size: 281721937
+    - path: normalize.py
+      hash: md5
+      md5: 5493882fe95ef6b12e6d9911db0883a2
+      size: 5848
+    outs:
+    - path: data/pipeline/features_acoustic_norm.csv
+      hash: md5
+      md5: 5ac238df951301af5955cb1e85dc73a0
+      size: 4540435
+    - path: data/pipeline/features_whisper_pca.npz
+      hash: md5
+      md5: bad84f4191ef30ebbde59f69d0f57896
+      size: 10148326
+    - path: data/pipeline/features_xlsr_pca.npz
+      hash: md5
+      md5: 72b17dc478a78c7b25015c5a6384c63c
+      size: 15168689
+  analyse_acoustics:
+    cmd: pixi run python analysis_acoustics.py
+    deps:
+    - path: analysis_acoustics.py
+      hash: md5
+      md5: 4cee93a1b6482de025ee7c74c9744f96
+      size: 10877
+    - path: data/pipeline/features_acoustic_norm.csv
+      hash: md5
+      md5: 5ac238df951301af5955cb1e85dc73a0
+      size: 4540435
+    outs:
+    - path: results/acoustics
+      hash: md5
+      md5: 99fe0e210a73e004793fb6b922533178.dir
+      size: 579348
+      nfiles: 6
+  analyse_neural:
+    cmd: pixi run python analysis_neural.py
+    deps:
+    - path: analysis_neural.py
+      hash: md5
+      md5: d4764d52af08a7b5a413758c28a02792
+      size: 10368
+    - path: data/pipeline/features_whisper_pca.npz
+      hash: md5
+      md5: bad84f4191ef30ebbde59f69d0f57896
+      size: 10148326
+    - path: data/pipeline/features_xlsr_pca.npz
+      hash: md5
+      md5: 72b17dc478a78c7b25015c5a6384c63c
+      size: 15168689
+    - path: data/pipeline/phoneme_tokens.csv
+      hash: md5
+      md5: c5f342ffb4c616a09ed73234e98c8b54
+      size: 765662
+    outs:
+    - path: results/descriptive_neural
+      hash: md5
+      md5: e4911ba8361eab8fe357c57ff374b87d.dir
+      size: 12486994
+      nfiles: 32
+  analyse_crossrep:
+    cmd: pixi run python analysis_crossrep.py
+    deps:
+    - path: analysis_crossrep.py
+      hash: md5
+      md5: 9391fdac317a579d9fe0aded5385723a
+      size: 6173
+    - path: data/pipeline/features_acoustic_norm.csv
+      hash: md5
+      md5: 5ac238df951301af5955cb1e85dc73a0
+      size: 4540435
+    - path: data/pipeline/features_whisper_pca.npz
+      hash: md5
+      md5: bad84f4191ef30ebbde59f69d0f57896
+      size: 10148326
+    - path: data/pipeline/features_xlsr_pca.npz
+      hash: md5
+      md5: 72b17dc478a78c7b25015c5a6384c63c
+      size: 15168689
+    outs:
+    - path: results/cross_representation
+      hash: md5
+      md5: 30d7968117aa588d96511090c2c65c0d.dir
+      size: 225
+      nfiles: 1
+  analyse_group_comparisons:
+    cmd: pixi run python analysis_group_comparisons.py
+    deps:
+    - path: analysis_group_comparisons.py
+      hash: md5
+      md5: d037f486391eace8cba8f151fc1e6f98
+      size: 12853
+    - path: data/pipeline/features_acoustic_norm.csv
+      hash: md5
+      md5: 5ac238df951301af5955cb1e85dc73a0
+      size: 4540435
+    - path: data/pipeline/features_whisper_pca.npz
+      hash: md5
+      md5: bad84f4191ef30ebbde59f69d0f57896
+      size: 10148326
+    - path: data/pipeline/features_xlsr_pca.npz
+      hash: md5
+      md5: 72b17dc478a78c7b25015c5a6384c63c
+      size: 15168689
+    - path: data/pipeline/phoneme_tokens.csv
+      hash: md5
+      md5: c5f342ffb4c616a09ed73234e98c8b54
+      size: 765662
+    outs:
+    - path: results/group_comparisons
+      hash: md5
+      md5: e221889e6810c9903880ed49be5b3e38.dir
+      size: 426396
+      nfiles: 17
+  analyse_interphonemes:
+    cmd: pixi run python analysis_interphonemes.py
+    deps:
+    - path: analysis_interphonemes.py
+      hash: md5
+      md5: 12fdee97a63d2edc93e2384d78350254
+      size: 25142
+    - path: data/pipeline/features_acoustic_norm.csv
+      hash: md5
+      md5: 5ac238df951301af5955cb1e85dc73a0
+      size: 4540435
+    - path: data/pipeline/features_whisper_pca.npz
+      hash: md5
+      md5: bad84f4191ef30ebbde59f69d0f57896
+      size: 10148326
+    - path: data/pipeline/features_xlsr_pca.npz
+      hash: md5
+      md5: 72b17dc478a78c7b25015c5a6384c63c
+      size: 15168689
+    outs:
+    - path: results/interphoneme
+      hash: md5
+      md5: 3b7218cf127bc8c53c72f79db18a8bcb.dir
+      size: 440018
+      nfiles: 18
+  analyse_lme_acoustic:
+    cmd: pixi run python analysis_lme_acoustics.py
+    deps:
+    - path: analysis_lme_acoustics.py
+      hash: md5
+      md5: b50770ee2792bfbfc74c93bcc982ef65
+      size: 11061
+    - path: data/pipeline/features_acoustic_norm.csv
+      hash: md5
+      md5: 5ac238df951301af5955cb1e85dc73a0
+      size: 4540435
+    outs:
+    - path: results/lme_acoustic
+      hash: md5
+      md5: f2e13b5276267eda4bd300e9e44019d6.dir
+      size: 2152
+      nfiles: 6
+  analyse_lme_neural:
+    cmd: pixi run python analysis_lme_neural.py
+    deps:
+    - path: analysis_lme_neural.py
+      hash: md5
+      md5: 8abbf272bccbe25160ef057c48fc7e88
+      size: 13311
+    - path: data/pipeline/features_whisper_pca.npz
+      hash: md5
+      md5: bad84f4191ef30ebbde59f69d0f57896
+      size: 10148326
+    - path: data/pipeline/features_xlsr_pca.npz
+      hash: md5
+      md5: 72b17dc478a78c7b25015c5a6384c63c
+      size: 15168689
+    - path: data/pipeline/phoneme_tokens.csv
+      hash: md5
+      md5: c5f342ffb4c616a09ed73234e98c8b54
+      size: 765662
+    outs:
+    - path: results/lme_neural
+      hash: md5
+      md5: d7a79307954767883a1dcdfd0d9d343a.dir
+      size: 5795
+      nfiles: 24
+  analyse_compare_representations:
+    cmd: pixi run python analysis_lme_compare_representations.py
+    deps:
+    - path: analysis_lme_compare_representations.py
+      hash: md5
+      md5: 20d92158389781b0341c6f476ccfc81d
+      size: 18358
+    - path: results/lme_acoustic
+      hash: md5
+      md5: f2e13b5276267eda4bd300e9e44019d6.dir
+      size: 2152
+      nfiles: 6
+    - path: results/lme_neural
+      hash: md5
+      md5: d7a79307954767883a1dcdfd0d9d343a.dir
+      size: 5795
+      nfiles: 24
+    outs:
+    - path: results/compare_representations
+      hash: md5
+      md5: bcaf72784fcff69ce7572b1bfe47322d.dir
+      size: 72757
+      nfiles: 6
+  analyse_ci_rope:
+    cmd: pixi run python analysis_rope_ci.py
+    deps:
+    - path: analysis_rope_ci.py
+      hash: md5
+      md5: e469eadbac5246ca4a9707c53ebecc3b
+      size: 25445
+    - path: data/pipeline/features_acoustic.csv
+      hash: md5
+      md5: 578ef737498a0a2779e359e173a766c1
+      size: 2606371
+    - path: data/pipeline/features_whisper.npz
+      hash: md5
+      md5: cab1577e2db60f86b6a8255f58ea8edc
+      size: 187845437
+    - path: data/pipeline/features_xlsr.npz
+      hash: md5
+      md5: ec6d3316f47b9eb56356f5c2f60d7e7d
+      size: 281721937
+    - path: data/pipeline/phoneme_tokens.csv
+      hash: md5
+      md5: c5f342ffb4c616a09ed73234e98c8b54
+      size: 765662
+    outs:
+    - path: results/ci_rope
+      hash: md5
+      md5: f4eb21eb64dd17886380e47e5fdbf7c6.dir
+      size: 196379
+      nfiles: 8
+  analyse_trajectory_sensitivity:
+    cmd: pixi run python analysis_trajectory_sensitivity.py --vowels 
+      a,e,i,o,u,œ,ø,?,?,?
+    deps:
+    - path: analysis_trajectory_sensitivity.py
+      hash: md5
+      md5: 0f026173e4fc394d216020d773e1979e
+      size: 19139
+    - path: data/pipeline/features_acoustic.csv
+      hash: md5
+      md5: 578ef737498a0a2779e359e173a766c1
+      size: 2606371
+    outs:
+    - path: results/trajectory_midpoint
+      hash: md5
+      md5: 3bdd229edfdea4f2f6489637d349f399.dir
+      size: 7882
+      nfiles: 4
+  analyse_clustering:
+    cmd: pixi run python analysis_hierarchical_clustering.py
+    deps:
+    - path: analysis_hierarchical_clustering.py
+      hash: md5
+      md5: b5003089141693509198e04c0b757050
+      size: 30164
+    - path: data/pipeline/features_acoustic_norm.csv
+      hash: md5
+      md5: 5ac238df951301af5955cb1e85dc73a0
+      size: 4540435
+    - path: data/pipeline/features_whisper_pca.npz
+      hash: md5
+      md5: bad84f4191ef30ebbde59f69d0f57896
+      size: 10148326
+    - path: data/pipeline/features_xlsr_pca.npz
+      hash: md5
+      md5: 72b17dc478a78c7b25015c5a6384c63c
+      size: 15168689
+    outs:
+    - path: results/clustering
+      hash: md5
+      md5: fd094f0ce552b27d043610da44f9288d.dir
+      size: 323655
+      nfiles: 18

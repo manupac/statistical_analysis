@@ -17,8 +17,8 @@ DVC pipeline: Praat/Parselmouth formants (Lobanov-normalised), Whisper-medium an
 ## Reproduce
 
 ```bash
-pip install -r requirements.txt   # TODO: add if missing
-# place the corpus in data/   (TODO: source / licence)
+pip install -r requirements.txt
+# place the corpus in data/
 dvc repro
 ```
 
